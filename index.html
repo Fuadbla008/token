@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vehicle Token System - Receipt Management (Local)</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans Bengali', 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .main-container {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 1.8em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .content-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-container, .receipt-preview {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .form-container h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+      font-weight: 600;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Noto Sans Bengali', 'Roboto', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: 'Noto Sans Bengali', 'Roboto', sans-serif;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .receipt-preview h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+      font-weight: 600;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    /* Print Style - Auto page size for printer */
+    @media print {
+      @page {
+        size: auto;
+        margin: 5mm;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+
+      html, body {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+      }
+
+      body {
+        font-family: 'Noto Sans Bengali', 'Roboto', Arial, sans-serif !important;
+        font-size: 12px !important;
+        color: #000 !important;
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .no-print {
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      .main-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .content-wrapper {
+        display: block !important;
+      }
+
+      .form-container {
+        display: none !important;
+      }
+
+      .receipt-preview {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 10px !important;
+        box-shadow: none !important;
+        border: none !important;
+        page-break-after: auto !important;
+      }
+
+      .receipt {
+        width: 100% !important;
+        max-width: 100% !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+        color: #000 !important;
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+      }
+      
+      .receipt-preview {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      .receipt-header {
+        text-align: center !important;
+        border-bottom: 2px dashed #000 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 15px !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .receipt-header h3 {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        margin: 5px 0 !important;
+        color: #000 !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .receipt-header p {
+        font-size: 11px !important;
+        margin: 3px 0 !important;
+        color: #000 !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .receipt-number {
+        font-weight: 700 !important;
+        font-size: 13px !important;
+        background: #f0f0f0 !important;
+        padding: 8px !important;
+        margin: 12px 0 !important;
+        text-align: center !important;
+        border: 1px solid #000 !important;
+        display: block !important;
+        visibility: visible !important;
+        color: #000 !important;
+      }
+
+      .receipt-info {
+        margin: 10px 0 !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .receipt-info-row {
+        display: block !important;
+        width: 100% !important;
+        margin: 6px 0 !important;
+        padding: 4px 0 !important;
+        font-size: 12px !important;
+        visibility: visible !important;
+        page-break-inside: avoid !important;
+      }
+
+      .receipt-info-label {
+        display: inline-block !important;
+        width: 50% !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        text-align: left !important;
+        visibility: visible !important;
+      }
+
+      .receipt-info-value {
+        display: inline-block !important;
+        width: 48% !important;
+        color: #000 !important;
+        text-align: right !important;
+        visibility: visible !important;
+      }
+
+      .receipt-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin: 12px 0 !important;
+        font-size: 10px !important;
+        display: table !important;
+        visibility: visible !important;
+        page-break-inside: avoid !important;
+      }
+
+      .receipt-table tr {
+        display: table-row !important;
+        visibility: visible !important;
+      }
+
+      .receipt-table td {
+        border: 1px solid #000 !important;
+        padding: 6px 4px !important;
+        text-align: center !important;
+        font-size: 10px !important;
+        color: #000 !important;
+        display: table-cell !important;
+        visibility: visible !important;
+        background: white !important;
+      }
+
+      .receipt-table tr:first-child td {
+        background: #000 !important;
+        color: #fff !important;
+        font-weight: 600 !important;
+      }
+
+      .receipt-footer {
+        margin-top: 15px !important;
+        padding-top: 10px !important;
+        border-top: 2px dashed #000 !important;
+        text-align: center !important;
+        font-size: 12px !important;
+        color: #000 !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .receipt-footer p {
+        margin: 5px 0 !important;
+        display: block !important;
+        visibility: visible !important;
+        color: #000 !important;
+      }
+
+      .empty-receipt {
+        display: none !important;
+      }
+
+      .records-section {
+        display: none !important;
+      }
+    }
+
+    .receipt {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+
+    .receipt-header h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 8px;
+    }
+
+    .receipt-number {
+      font-weight: 700;
+      font-size: 16px;
+      background: #f0f0f0;
+      padding: 10px;
+      margin: 15px 0;
+      text-align: center;
+      border-radius: 5px;
+      color: #333;
+    }
+
+    .receipt-info {
+      margin: 15px 0;
+    }
+
+    .receipt-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dotted #ddd;
+    }
+
+    .receipt-info-label {
+      font-weight: 600;
+      color: #555;
+    }
+
+    .receipt-info-value {
+      color: #333;
+    }
+
+    .receipt-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 12px;
+    }
+
+    .receipt-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      background: #f9f9f9;
+    }
+
+    .receipt-table tr:first-child td {
+      background: #667eea;
+      color: white;
+      font-weight: 600;
+    }
+
+    .receipt-footer {
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 2px solid #667eea;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .empty-receipt {
+      text-align: center;
+      color: #999;
+      padding: 40px;
+      font-style: italic;
+    }
+
+    .records-section {
+      margin-top: 30px;
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .top-actions button {
+      margin-top: 0;
+      font-size: 14px;
+      padding: 10px 12px;
+      width: auto;
+      flex: 1;
+    }
+
+    .records-section h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+      font-weight: 600;
+      border-bottom: 3px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .records-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .record-item {
+      padding: 15px;
+      margin: 10px 0;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .record-item:hover {
+      background: #f0f0f0;
+    }
+
+    .record-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .record-number {
+      font-weight: 700;
+      color: #667eea;
+    }
+
+    .record-date {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .record-details {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="main-container">
+  <div class="header">
+    <h1>🚗 গাড়ির টোকেন সিস্টেম (Local)</h1>
+    <p style="font-size: 1.2em;">Receipt Management — Stored in browser (localStorage)</p>
+  </div>
+
+  <div class="top-actions no-print">
+    <button onclick="clearAllData()" style="background:#2c3e50;">Clear All Data</button>
+    <button onclick="window.scrollTo(0,0)" style="background:#16a085;">Top</button>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- INPUT FORM -->
+    <div class="form-container no-print">
+      <h2>টোকেন এন্ট্রি</h2>
+
+      <div class="form-group">
+        <label>ID (গাড়ীর নাম্বার/ড্রাইভার ID) *</label>
+        <input id="car" placeholder="ID বা গাড়ীর নাম্বার লিখুন (string/number)" required />
+      </div>
+
+      <div class="form-group">
+        <label>ড্রাইভারের নাম *</label>
+        <input id="dname" placeholder="ড্রাইভারের নাম লিখুন" required />
+      </div>
+
+      <div class="form-group">
+        <label>ড্রাইভারের নাম্বার *</label>
+        <input id="dnum" type="tel" placeholder="মোবাইল নম্বর" required />
+      </div>
+
+      <div class="form-group">
+        <label>হেল্পার নাম</label>
+        <input id="hname" placeholder="হেল্পারের নাম (ঐচ্ছিক)" />
+      </div>
+
+      <div class="form-group">
+        <label>হেল্পার নাম্বার</label>
+        <input id="hnum" type="tel" placeholder="হেল্পারের মোবাইল নম্বর" />
+      </div>
+
+      <div class="form-group">
+        <label>রুট *</label>
+        <input id="route" placeholder="রুটের নাম" required />
+      </div>
+
+      <div class="form-group">
+        <label>সময় *</label>
+        <input id="time" type="time" required />
+        <small style="color: #666; font-size: 12px;">সময় automatic fill হবে</small>
+      </div>
+
+      <div class="form-group">
+        <label>তারিখ *</label>
+        <input id="date" type="date" required />
+      </div>
+
+      <button onclick="generateToken()">💾 সেভ করুন এবং প্রিন্ট করুন</button>
+      <button onclick="clearForm()" style="background: #e74c3c; margin-top: 10px;">🗑️ ফর্ম ক্লিয়ার করুন</button>
+    </div>
+
+    <!-- RECEIPT PREVIEW -->
+    <div class="receipt-preview no-print">
+      <h2>রিসিপ্ট প্রিভিউ</h2>
+      <div id="printArea" class="receipt">
+        <div class="empty-receipt">রিসিপ্ট দেখতে ফর্মটি পূরণ করুন</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH SECTION -->
+  <div class="records-section no-print">
+    <h2>🔍 সার্চ করুন</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>রিসিপ্ট নম্বর</label>
+        <input id="searchReceiptNo" placeholder="রিসিপ্ট নম্বর লিখুন" />
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>ড্রাইভার ID</label>
+        <input id="searchDriverId" placeholder="ড্রাইভার ID লিখুন" />
+      </div>
+    </div>
+    <button onclick="searchRecords()" style="width: 100%; margin-bottom: 20px;">🔍 সার্চ করুন</button>
+    <div id="searchResults" class="records-list">
+      <!-- Search results will be loaded here -->
+    </div>
+  </div>
+
+  <!-- DATE SORTED RECORDS SECTION -->
+  <div class="records-section no-print">
+    <h2>📅 তারিখ অনুযায়ী রেকর্ডসমূহ</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>From</label>
+        <input id="filterFrom" type="date" />
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>To</label>
+        <input id="filterTo" type="date" />
+      </div>
+    </div>
+    <button onclick="loadDateSortedRecords()" style="width: 100%; margin-bottom: 12px;">📅 Filter + Show</button>
+    <button onclick="exportToExcel()" style="width: 100%; margin-bottom: 20px; background: #27ae60;">📊 Excel এ Export করুন</button>
+    <div id="dateSortedRecords" class="records-list">
+      <!-- Date sorted records will be loaded here -->
+    </div>
+  </div>
+
+  <!-- RECORDS SECTION -->
+  <div class="records-section no-print">
+    <h2>📋 সঞ্চিত রেকর্ডসমূহ</h2>
+    <div style="display:flex; gap:10px; align-items:center; margin-bottom: 12px;">
+      <button onclick="prevPage()" style="width:auto; padding:10px 12px; font-size:14px;">Prev</button>
+      <div style="flex:1; text-align:center; font-size:13px; color:#555;">
+        Page: <span id="pageInfo">1</span>
+      </div>
+      <button onclick="nextPage()" style="width:auto; padding:10px 12px; font-size:14px;">Next</button>
+    </div>
+    <div id="recordsList" class="records-list">
+      <!-- Records will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<script>
+// Local storage keys
+const STORAGE_KEY = 'vehicle_tokens';
+const NEXT_ID_KEY = 'vehicle_tokens_next_id';
+
+// Pagination
+let currentPage = 1;
+const pageSize = 10;
+
+// Last saved tracking (prevent duplicate double-saves)
+let lastSavedData = null;
+let lastReceiptNo = null;
+let lastDriverAutoFilled = null;
+
+// Helpers: storage
+function getStoredRecords() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch { return []; }
+}
+function setStoredRecords(arr) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr || []));
+}
+function getNextId() {
+  const n = parseInt(localStorage.getItem(NEXT_ID_KEY) || '1', 10);
+  localStorage.setItem(NEXT_ID_KEY, String(n + 1));
+  return n;
+}
+function clearAllData() {
+  if (!confirm('সব ডাটা মুছতে চান?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(NEXT_ID_KEY);
+  lastSavedData = null;
+  lastReceiptNo = null;
+  loadRecords();
+  alert('সব ডাটা মুছে ফেলা হয়েছে।');
+}
+
+// Receipt number generator (YYYYMMDD-XXXXX)
+function generateReceiptNumber(date) {
+  const datePart = date.replace(/-/g, '').substring(0,8);
+  const records = getStoredRecords();
+  const todayCount = records.filter(r => r.receipt_no && r.receipt_no.startsWith(datePart + '-')).length;
+  const uniqueNum = ((todayCount * 7) + Math.floor(Math.random() * 1000)) % 99999;
+  const uniqueStr = uniqueNum.toString().padStart(5, '0');
+  return `${datePart}-${uniqueStr}`;
+}
+
+// Save record locally
+function saveToLocal(data) {
+  return new Promise((resolve, reject) => {
+    try {
+      const records = getStoredRecords();
+      // Duplicate check: same car, date, time
+      if (records.some(r => r.car_number === data.car && r.date === data.date && r.time === data.time)) {
+        return reject(new Error('এই গাড়ীর নাম্বার, তারিখ এবং সময়ের জন্য ইতিমধ্যে একটি রেকর্ড আছে!'));
+      }
+      const receiptNo = generateReceiptNumber(data.date);
+      const id = getNextId();
+      const created_at = new Date().toISOString();
+      const rec = {
+        id,
+        receipt_no: receiptNo,
+        car_number: data.car,
+        driver_name: data.dname,
+        driver_number: data.dnum,
+        helper_name: data.hname || null,
+        helper_number: data.hnum || null,
+        route: data.route,
+        time: data.time,
+        date: data.date,
+        created_at
+      };
+      records.unshift(rec); // newest first
+      setStoredRecords(records);
+      resolve({ receiptNo, id });
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+// Load records (pagination)
+function loadRecords() {
+  const recordsList = document.getElementById('recordsList');
+  const records = getStoredRecords();
+  const total = records.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * pageSize;
+  const pageRecords = records.slice(start, start + pageSize);
+  document.getElementById('pageInfo').textContent = `${currentPage} / ${totalPages}`;
+  if (!pageRecords.length) {
+    recordsList.innerHTML = '<div class="empty-receipt">কোনো রেকর্ড নেই</div>';
+    return;
+  }
+  recordsList.innerHTML = pageRecords.map(record => `
+    <div class="record-item">
+      <div class="record-header">
+        <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+        <span class="record-date">${record.date} ${record.time}</span>
+      </div>
+      <div class="record-details">
+        <strong>গাড়ী:</strong> ${record.car_number} | 
+        <strong>ড্রাইভার:</strong> ${record.driver_name} (${record.driver_number}) | 
+        <strong>রুট:</strong> ${record.route}
+      </div>
+      <div style="margin-top: 8px; font-size: 11px; color: #888;">
+        ID: ${record.id} | Created: ${new Date(record.created_at).toLocaleString('bn-BD')}
+      </div>
+      <div style="margin-top: 10px;">
+        <button onclick="printReceiptById(${record.id})" style="width:auto; padding:8px 12px; font-size:14px;">🖨️ Print</button>
+      </div>
+    </div>
+  `).join('');
+}
+function prevPage() { if (currentPage > 1) { currentPage--; loadRecords(); } }
+function nextPage() { currentPage++; loadRecords(); }
+
+// Generate and print receipt (uses local save)
+async function generateToken() {
+  const car = document.getElementById('car').value.trim();
+  const dname = document.getElementById('dname').value.trim();
+  const dnum = document.getElementById('dnum').value.trim();
+  const hname = document.getElementById('hname').value.trim();
+  const hnum = document.getElementById('hnum').value.trim();
+  const route = document.getElementById('route').value.trim();
+  const time = document.getElementById('time').value;
+  const date = document.getElementById('date').value;
+
+  if (!car || !dname || !dnum || !route || !time || !date) {
+    alert('অনুগ্রহ করে সব প্রয়োজনীয় ফিল্ড পূরণ করুন!');
+    return;
+  }
+
+  const data = {
+    car, dname, dnum, hname: hname || 'N/A', hnum: hnum || 'N/A', route, time, date
+  };
+
+  // Prevent duplicate saves if same content as last saved
+  function isDataSame(d) {
+    if (!lastSavedData) return false;
+    return lastSavedData.car === d.car &&
+      lastSavedData.dname === d.dname &&
+      lastSavedData.dnum === d.dnum &&
+      lastSavedData.hname === (d.hname || 'N/A') &&
+      lastSavedData.hnum === (d.hnum || 'N/A') &&
+      lastSavedData.route === d.route &&
+      lastSavedData.time === d.time &&
+      lastSavedData.date === d.date;
+  }
+
+  let receiptNo;
+  if (isDataSame(data)) {
+    receiptNo = lastReceiptNo;
+  } else {
+    try {
+      const res = await saveToLocal(data);
+      receiptNo = res.receiptNo;
+      lastSavedData = {
+        car: data.car, dname: data.dname, dnum: data.dnum, hname: data.hname || 'N/A',
+        hnum: data.hnum || 'N/A', route: data.route, time: data.time, date: data.date
+      };
+      lastReceiptNo = receiptNo;
+      loadRecords();
+    } catch (err) {
+      alert(err.message || 'ডাটা সেভ করতে সমস্যা হয়েছে!');
+      return;
+    }
+  }
+
+  // Render receipt HTML (same layout as before)
+  const formattedDate = new Date(date).toLocaleDateString('bn-BD', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  const receiptHTML = `
+    <div class="receipt">
+      <div class="receipt-header">
+        <h3>গাড়ির টোকেন সিস্টেম</h3>
+        <p>Vehicle Token System</p>
+      </div>
+
+      <div class="receipt-number">রিসিপ্ট নম্বর: ${receiptNo}</div>
+
+      <div class="receipt-info">
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">গাড়ীর নাম্বার:</span>
+          <span class="receipt-info-value">${data.car}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">ড্রাইভারের নাম:</span>
+          <span class="receipt-info-value">${data.dname}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">ড্রাইভারের নাম্বার:</span>
+          <span class="receipt-info-value">${data.dnum}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">হেল্পার নাম:</span>
+          <span class="receipt-info-value">${data.hname}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">হেল্পার নাম্বার:</span>
+          <span class="receipt-info-value">${data.hnum}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">রুট:</span>
+          <span class="receipt-info-value">${data.route}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">সময়:</span>
+          <span class="receipt-info-value">${data.time}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">তারিখ:</span>
+          <span class="receipt-info-value">${formattedDate}</span>
+        </div>
+      </div>
+
+      <table class="receipt-table">
+        <tr>
+          <td>ডোপ প্রাস</td>
+          <td>ডোপ লিফট/প্রেস</td>
+          <td>টোটাল ওজন</td>
+          <td>পার্টনার</td>
+          <td>১৭ ফিট</td>
+        </tr>
+        <tr>
+          <td>টায়ার চেক</td>
+          <td>ফুল পরিষ্কার</td>
+          <td>ফিটনেস</td>
+          <td>ব্রেক</td>
+          <td>এসি</td>
+        </tr>
+      </table>
+
+      <table class="receipt-table">
+        <tr>
+          <td>ফগ লাইট / জগ / লক / রেঞ্চ</td>
+          <td>পাইপ / স্পেয়ার চাকা</td>
+          <td>সাইড বুক / নাম্বার প্লেট / লিভার</td>
+        </tr>
+        <tr>
+          <td style="height: 26px;"></td>
+          <td style="height: 26px;"></td>
+          <td style="height: 26px;"></td>
+        </tr>
+      </table>
+
+      <div class="receipt-footer">
+        <p>ধন্যবাদ</p>
+        <p>Thank You!</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('printArea').innerHTML = receiptHTML;
+  setTimeout(() => { window.scrollTo(0,0); window.print(); }, 400);
+}
+
+// Clear form
+function clearForm() {
+  document.getElementById('car').value = '';
+  document.getElementById('dname').value = '';
+  document.getElementById('dnum').value = '';
+  document.getElementById('hname').value = '';
+  document.getElementById('hnum').value = '';
+  document.getElementById('route').value = '';
+  autoFillTime();
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('printArea').innerHTML = '<div class="empty-receipt">রিসিপ্ট দেখতে ফর্মটি পূরণ করুন</div>';
+  lastSavedData = null;
+  lastReceiptNo = null;
+}
+
+// Auto fill time
+function autoFillTime() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  document.getElementById('time').value = `${hours}:${minutes}`;
+}
+
+// Search records locally
+function searchRecords() {
+  const receiptNo = document.getElementById('searchReceiptNo').value.trim();
+  const driverId = document.getElementById('searchDriverId').value.trim();
+  if (!receiptNo && !driverId) { alert('অনুগ্রহ করে রিসিপ্ট নম্বর অথবা ড্রাইভার ID লিখুন!'); return; }
+  const records = getStoredRecords();
+  let results = [];
+  if (receiptNo) results = records.filter(r => r.receipt_no === receiptNo);
+  else if (driverId) results = records.filter(r => (r.car_number||'').toLowerCase().includes(driverId.toLowerCase()));
+  const searchResults = document.getElementById('searchResults');
+  if (!results.length) { searchResults.innerHTML = '<div class="empty-receipt">কোনো রেকর্ড পাওয়া যায়নি</div>'; return; }
+  searchResults.innerHTML = results.map(record => `
+    <div class="record-item">
+      <div class="record-header">
+        <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+        <span class="record-date">${record.date} ${record.time}</span>
+      </div>
+      <div class="record-details">
+        <strong>ID:</strong> ${record.car_number} | 
+        <strong>ড্রাইভার:</strong> ${record.driver_name} (${record.driver_number}) | 
+        <strong>রুট:</strong> ${record.route}
+      </div>
+      <div style="margin-top: 10px;">
+        <button onclick="printReceiptById(${record.id})" style="width: auto; padding: 8px 15px; font-size: 14px; margin-right: 10px;">🖨️ প্রিন্ট করুন</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Load date sorted records
+function loadDateSortedRecords() {
+  const from = document.getElementById('filterFrom').value;
+  const to = document.getElementById('filterTo').value;
+  let records = getStoredRecords();
+  if (from) records = records.filter(r => r.date >= from);
+  if (to) records = records.filter(r => r.date <= to);
+  records.sort((a,b) => (b.date + ' ' + b.time).localeCompare(a.date + ' ' + a.time));
+  const grouped = {};
+  records.forEach(r => { (grouped[r.date] = grouped[r.date] || []).push(r); });
+  let html = '';
+  Object.keys(grouped).sort().reverse().forEach(date => {
+    const formattedDate = new Date(date).toLocaleDateString('bn-BD', { year:'numeric', month:'long', day:'numeric' });
+    html += `<div style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #667eea;">`;
+    html += `<h3 style="margin-bottom: 15px; color: #667eea;">📅 ${formattedDate}</h3>`;
+    html += grouped[date].map(record => `
+      <div class="record-item" style="margin: 10px 0;">
+        <div class="record-header">
+          <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+          <span class="record-date">${record.time}</span>
+        </div>
+        <div class="record-details">
+          <strong>ID:</strong> ${record.car_number} | 
+          <strong>ড্রাইভার:</strong> ${record.driver_name} | 
+          <strong>রুট:</strong> ${record.route}
+        </div>
+        <div style="margin-top: 10px;">
+          <button onclick="printReceiptById(${record.id})" style="width: auto; padding: 8px 15px; font-size: 14px;">🖨️ প্রিন্ট</button>
+        </div>
+      </div>
+    `).join('');
+    html += `</div>`;
+  });
+  document.getElementById('dateSortedRecords').innerHTML = html || '<div class="empty-receipt">কোনো রেকর্ড নেই</div>';
+}
+
+// Print receipt by id
+function printReceiptById(id) {
+  const records = getStoredRecords();
+  const record = records.find(r => r.id === id);
+  if (!record) { alert('রেকর্ড পাওয়া যায়নি!'); return; }
+  const formattedDate = new Date(record.date).toLocaleDateString('bn-BD', { year:'numeric', month:'long', day:'numeric' });
+  const receiptHTML = `
+    <div class="receipt">
+      <div class="receipt-header">
+        <h3>গাড়ির টোকেন সিস্টেম</h3>
+        <p>Vehicle Token System</p>
+      </div>
+      <div class="receipt-number">রিসিপ্ট নম্বর: ${record.receipt_no}</div>
+      <div class="receipt-info">
+        <div class="receipt-info-row"><span class="receipt-info-label">ID (গাড়ীর নাম্বার):</span><span class="receipt-info-value">${record.car_number}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">ড্রাইভারের নাম:</span><span class="receipt-info-value">${record.driver_name}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">ড্রাইভারের নাম্বার:</span><span class="receipt-info-value">${record.driver_number}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">হেল্পার নাম:</span><span class="receipt-info-value">${record.helper_name || 'N/A'}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">হেল্পার নাম্বার:</span><span class="receipt-info-value">${record.helper_number || 'N/A'}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">রুট:</span><span class="receipt-info-value">${record.route}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">সময়:</span><span class="receipt-info-value">${record.time}</span></div>
+        <div class="receipt-info-row"><span class="receipt-info-label">তারিখ:</span><span class="receipt-info-value">${formattedDate}</span></div>
+      </div>
+      <table class="receipt-table">
+        <tr><td>ডোপ প্রাস</td><td>ডোপ লিফট/প্রেস</td><td>টোটাল ওজন</td><td>পার্টনার</td><td>১৭ ফিট</td></tr>
+        <tr><td>টায়ার চেক</td><td>ফুল পরিষ্কার</td><td>ফিটনেস</td><td>ব্রেক</td><td>এসি</td></tr>
+      </table>
+      <div class="receipt-footer"><p>ধন্যবাদ</p><p>Thank You!</p></div>
+    </div>
+  `;
+  document.getElementById('printArea').innerHTML = receiptHTML;
+  setTimeout(() => { window.scrollTo(0,0); window.print(); }, 400);
+}
+
+// Export stored records to CSV
+function exportToExcel() {
+  const records = getStoredRecords();
+  if (!records.length) { alert('রেকর্ড নেই!'); return; }
+  const headers = ['রিসিপ্ট নম্বর','ID','ড্রাইভারের নাম','ড্রাইভারের নাম্বার','হেল্পার নাম','হেল্পার নাম্বার','রুট','সময়','তারিখ','created_at'];
+  const csvRows = [headers.join(',')];
+  records.forEach(r => {
+    const row = [
+      r.receipt_no || '', r.car_number || '', r.driver_name || '', r.driver_number || '',
+      r.helper_name || '', r.helper_number || '', r.route || '', r.time || '', r.date || '', r.created_at || ''
+    ];
+    csvRows.push(row.map(field => `"${String(field).replace(/"/g,'""')}"`).join(','));
+  });
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `vehicle_tokens_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  alert('CSV ডাউনলোড হয়েছে!');
+}
+
+// Driver lookup using drivers.json
+async function lookupDriverById(driverId) {
+  if (!driverId) return null;
+  try {
+    const res = await fetch('drivers.json');
+    if (!res.ok) return null;
+    const list = await res.json();
+    return list.find(d => String(d.id).trim().toLowerCase() === String(driverId).trim().toLowerCase()) || null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Auto-fill driver on blur
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+  autoFillTime();
+  loadRecords();
+
+  const idInput = document.getElementById('car');
+  idInput.addEventListener('blur', async function() {
+    const idVal = idInput.value.trim();
+    if (!idVal || idVal === lastDriverAutoFilled) return;
+    const driver = await lookupDriverById(idVal);
+    if (driver) {
+      document.getElementById('dname').value = driver.name || '';
+      document.getElementById('dnum').value = driver.mobile || '';
+      lastDriverAutoFilled = idVal;
+    } else {
+      lastDriverAutoFilled = null;
+    }
+  });
+});
+</script>
+
+</body>
+</html>
