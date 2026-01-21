@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vehicle Token System - Receipt Management (Local)</title>
+  <title>Vehicle Token System - Receipt Management</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&display=swap');
-
+    
     * {
       margin: 0;
       padding: 0;
@@ -22,7 +21,7 @@
     }
 
     .main-container {
-      max-width: 420px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
@@ -33,16 +32,16 @@
     }
 
     .header h1 {
-      font-size: 1.8em;
+      font-size: 2.5em;
       font-weight: 700;
       margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     }
 
     .content-wrapper {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
     }
 
     @media (max-width: 768px) {
@@ -51,12 +50,11 @@
       }
     }
 
-    .form-container,
-    .receipt-preview {
+    .form-container, .receipt-preview {
       background: white;
       border-radius: 15px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     .form-container h2 {
@@ -98,8 +96,8 @@
 
     button {
       width: 100%;
-      padding: 12px;
-      font-size: 16px;
+      padding: 15px;
+      font-size: 18px;
       font-weight: 600;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -142,8 +140,7 @@
         color-adjust: exact !important;
       }
 
-      html,
-      body {
+      html, body {
         width: 100% !important;
         height: 100% !important;
         margin: 0 !important;
@@ -204,7 +201,7 @@
         padding: 0 !important;
         box-sizing: border-box !important;
       }
-
+      
       .receipt-preview {
         width: 100% !important;
         max-width: 100% !important;
@@ -433,22 +430,8 @@
       margin-top: 30px;
       background: white;
       border-radius: 15px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-
-    .top-actions button {
-      margin-top: 0;
-      font-size: 14px;
-      padding: 10px 12px;
-      width: auto;
-      flex: 1;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
     .records-section h2 {
@@ -501,331 +484,733 @@
     }
   </style>
 </head>
-
 <body>
 
-  <div class="main-container">
-    <div class="header">
-      <h1>🚗 গাড়ির টোকেন সিস্টেম (Local)</h1>
-      <p style="font-size: 1.2em;">Receipt Management — Stored in browser (localStorage)</p>
+<div class="main-container">
+  <div class="header">
+    <h1>🚗 গাড়ির টোকেন সিস্টেম</h1>
+    <p style="font-size: 1.2em;">Receipt Management System</p>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- INPUT FORM -->
+    <div class="form-container no-print">
+      <h2>টোকেন এন্ট্রি</h2>
+
+      <div class="form-group">
+        <label>ID (গাড়ীর নাম্বার/ড্রাইভার ID) *</label>
+        <input id="car" placeholder="ID বা গাড়ীর নাম্বার লিখুন (string/number)" required />
+      </div>
+
+      <div class="form-group">
+        <label>ড্রাইভারের নাম *</label>
+        <input id="dname" placeholder="ড্রাইভারের নাম লিখুন" required />
+      </div>
+
+      <div class="form-group">
+        <label>ড্রাইভারের নাম্বার *</label>
+        <input id="dnum" type="tel" placeholder="মোবাইল নম্বর" required />
+      </div>
+
+      <div class="form-group">
+        <label>হেল্পার নাম</label>
+        <input id="hname" placeholder="হেল্পারের নাম (ঐচ্ছিক)" />
+      </div>
+
+      <div class="form-group">
+        <label>হেল্পার নাম্বার</label>
+        <input id="hnum" type="tel" placeholder="হেল্পারের মোবাইল নম্বর" />
+      </div>
+
+      <div class="form-group">
+        <label>রুট *</label>
+        <input id="route" placeholder="রুটের নাম" required />
+      </div>
+
+      <div class="form-group">
+        <label>সময় *</label>
+        <input id="time" type="time" required />
+        <small style="color: #666; font-size: 12px;">সময় automatic fill হবে</small>
+      </div>
+
+      <div class="form-group">
+        <label>তারিখ *</label>
+        <input id="date" type="date" required />
+      </div>
+
+      <button onclick="generateToken()">💾 সেভ করুন এবং প্রিন্ট করুন</button>
+      <button onclick="clearForm()" style="background: #e74c3c; margin-top: 10px;">🗑️ ফর্ম ক্লিয়ার করুন</button>
     </div>
 
-    <div class="top-actions no-print">
-      <button onclick="clearAllData()" style="background:#2c3e50;">Clear All Data</button>
-      <button onclick="window.scrollTo(0,0)" style="background:#16a085;">Top</button>
-    </div>
-
-    <div class="content-wrapper">
-      <!-- INPUT FORM -->
-      <div class="form-container no-print">
-        <h2>টোকেন এন্ট্রি</h2>
-
-        <div class="form-group">
-          <label>ID (গাড়ীর নাম্বার/ড্রাইভার ID) *</label>
-          <input id="car" placeholder="ID বা গাড়ীর নাম্বার লিখুন (string/number)" required />
-        </div>
-
-        <div class="form-group">
-          <label>ড্রাইভারের নাম *</label>
-          <input id="dname" placeholder="ড্রাইভারের নাম লিখুন" required />
-        </div>
-
-        <div class="form-group">
-          <label>ড্রাইভারের নাম্বার *</label>
-          <input id="dnum" type="tel" placeholder="মোবাইল নম্বর" required />
-        </div>
-
-        <div class="form-group">
-          <label>হেল্পার নাম</label>
-          <input id="hname" placeholder="হেল্পারের নাম (ঐচ্ছিক)" />
-        </div>
-
-        <div class="form-group">
-          <label>হেল্পার নাম্বার</label>
-          <input id="hnum" type="tel" placeholder="হেল্পারের মোবাইল নম্বর" />
-        </div>
-
-        <div class="form-group">
-          <label>রুট *</label>
-          <input id="route" placeholder="রুটের নাম" required />
-        </div>
-
-        <div class="form-group">
-          <label>সময় *</label>
-          <input id="time" type="time" required />
-          <small style="color: #666; font-size: 12px;">সময় automatic fill হবে</small>
-        </div>
-
-        <div class="form-group">
-          <label>তারিখ *</label>
-          <input id="date" type="date" required />
-        </div>
-
-        <button onclick="generateToken()">💾 সেভ করুন এবং প্রিন্ট করুন</button>
-        <button onclick="clearForm()" style="background: #e74c3c; margin-top: 10px;">🗑️ ফর্ম ক্লিয়ার করুন</button>
-      </div>
-
-      <!-- RECEIPT PREVIEW -->
-      <div class="receipt-preview no-print">
-        <h2>রিসিপ্ট প্রিভিউ</h2>
-        <div id="printArea" class="receipt">
-          <div class="empty-receipt">রিসিপ্ট দেখতে ফর্মটি পূরণ করুন</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SEARCH SECTION -->
-    <div class="records-section no-print">
-      <h2>🔍 সার্চ করুন</h2>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>রিসিপ্ট নম্বর</label>
-          <input id="searchReceiptNo" placeholder="রিসিপ্ট নম্বর লিখুন" />
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>ড্রাইভার ID</label>
-          <input id="searchDriverId" placeholder="ড্রাইভার ID লিখুন" />
-        </div>
-      </div>
-      <button onclick="searchRecords()" style="width: 100%; margin-bottom: 20px;">🔍 সার্চ করুন</button>
-      <div id="searchResults" class="records-list">
-        <!-- Search results will be loaded here -->
-      </div>
-    </div>
-
-    <!-- DATE SORTED RECORDS SECTION -->
-    <div class="records-section no-print">
-      <h2>📅 তারিখ অনুযায়ী রেকর্ডসমূহ</h2>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>From</label>
-          <input id="filterFrom" type="date" />
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label>To</label>
-          <input id="filterTo" type="date" />
-        </div>
-      </div>
-      <button onclick="loadDateSortedRecords()" style="width: 100%; margin-bottom: 12px;">📅 Filter + Show</button>
-      <button onclick="exportToExcel()" style="width: 100%; margin-bottom: 20px; background: #27ae60;">📊 Excel এ Export
-        করুন</button>
-      <div id="dateSortedRecords" class="records-list">
-        <!-- Date sorted records will be loaded here -->
-      </div>
-    </div>
-
-    <!-- RECORDS SECTION -->
-    <div class="records-section no-print">
-      <h2>📋 সঞ্চিত রেকর্ডসমূহ</h2>
-      <div style="display:flex; gap:10px; align-items:center; margin-bottom: 12px;">
-        <button onclick="prevPage()" style="width:auto; padding:10px 12px; font-size:14px;">Prev</button>
-        <div style="flex:1; text-align:center; font-size:13px; color:#555;">
-          Page: <span id="pageInfo">1</span>
-        </div>
-        <button onclick="nextPage()" style="width:auto; padding:10px 12px; font-size:14px;">Next</button>
-      </div>
-      <div id="recordsList" class="records-list">
-        <!-- Records will be loaded here -->
+    <!-- RECEIPT PREVIEW -->
+    <div class="receipt-preview no-print">
+      <h2>রিসিপ্ট প্রিভিউ</h2>
+      <div id="printArea" class="receipt">
+        <div class="empty-receipt">রিসিপ্ট দেখতে ফর্মটি পূরণ করুন</div>
       </div>
     </div>
   </div>
 
-  <script>
-    /* ============================
-       CONFIG
-    ============================ */
-    const API = "/api";
-    let currentPage = 1;
-    const pageSize = 10;
-    let lastSavedHash = null;
-
-    /* ============================
-       HELPERS
-    ============================ */
-    function hashData(d) {
-      return JSON.stringify(d);
-    }
-    function qs(id) { return document.getElementById(id); }
-
-    /* ============================
-       SERVER CALLS
-    ============================ */
-    async function apiGet(url) {
-      const r = await fetch(url);
-      if (!r.ok) throw new Error("Server error");
-      return r.json();
-    }
-    async function apiPost(url, data) {
-      const r = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      if (!r.ok) throw new Error("Save failed");
-      return r.json();
-    }
-
-    /* ============================
-       LOAD RECORDS (PAGINATION)
-    ============================ */
-    async function loadRecords() {
-      const res = await apiGet(`${API}/list?page=${currentPage}&size=${pageSize}`);
-      const list = qs("recordsList");
-      qs("pageInfo").textContent = `${res.page} / ${res.totalPages}`;
-
-      if (!res.data.length) {
-        list.innerHTML = `<div class="empty-receipt">কোনো রেকর্ড নেই</div>`;
-        return;
-      }
-
-      list.innerHTML = res.data.map(r => `
-    <div class="record-item">
-      <div class="record-header">
-        <span class="record-number">রিসিপ্ট: ${r.receipt_no}</span>
-        <span class="record-date">${r.date} ${r.time}</span>
+  <!-- SEARCH SECTION -->
+  <div class="records-section no-print">
+    <h2>🔍 সার্চ করুন</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>রিসিপ্ট নম্বর</label>
+        <input id="searchReceiptNo" placeholder="রিসিপ্ট নম্বর লিখুন" />
       </div>
-      <div class="record-details">
-        <strong>ID:</strong> ${r.car_number} |
-        <strong>ড্রাইভার:</strong> ${r.driver_name} |
-        <strong>রুট:</strong> ${r.route}
-      </div>
-      <div style="margin-top:8px">
-        <button onclick="printReceiptById('${r.id}')" style="width:auto;padding:8px 12px">🖨️ Print</button>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>ড্রাইভার ID</label>
+        <input id="searchDriverId" placeholder="ড্রাইভার ID লিখুন" />
       </div>
     </div>
-  `).join("");
-    }
-    function prevPage() { if (currentPage > 1) { currentPage--; loadRecords(); } }
-    function nextPage() { currentPage++; loadRecords(); }
+    <button onclick="searchRecords()" style="width: 100%; margin-bottom: 20px;">🔍 সার্চ করুন</button>
+    <div id="searchResults" class="records-list">
+      <!-- Search results will be loaded here -->
+    </div>
+  </div>
 
-    /* ============================
-       SAVE + PRINT
-    ============================ */
-    async function generateToken() {
-      const data = {
-        car: qs("car").value.trim(),
-        dname: qs("dname").value.trim(),
-        dnum: qs("dnum").value.trim(),
-        hname: qs("hname").value.trim() || "N/A",
-        hnum: qs("hnum").value.trim() || "N/A",
-        route: qs("route").value.trim(),
-        time: qs("time").value,
-        date: qs("date").value
+  <!-- DATE SORTED RECORDS SECTION -->
+  <div class="records-section no-print">
+    <h2>📅 তারিখ অনুযায়ী রেকর্ডসমূহ</h2>
+    <button onclick="loadDateSortedRecords()" style="width: 100%; margin-bottom: 20px;">📅 তারিখ অনুযায়ী দেখুন</button>
+    <button onclick="exportToExcel()" style="width: 100%; margin-bottom: 20px; background: #27ae60;">📊 Excel এ Export করুন</button>
+    <div id="dateSortedRecords" class="records-list">
+      <!-- Date sorted records will be loaded here -->
+    </div>
+  </div>
+
+  <!-- RECORDS SECTION -->
+  <div class="records-section no-print">
+    <h2>📋 সঞ্চিত রেকর্ডসমূহ</h2>
+    <div id="recordsList" class="records-list">
+      <!-- Records will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<script>
+// API Base URL
+const API_BASE_URL = 'http://localhost:3000/api';
+
+// Track last saved data to avoid duplicate saves
+let lastSavedData = null;
+let lastReceiptNo = null;
+
+// Check if current data matches last saved data
+function isDataSame(data) {
+  if (!lastSavedData) return false;
+  
+  return (
+    lastSavedData.car === data.car &&
+    lastSavedData.dname === data.dname &&
+    lastSavedData.dnum === data.dnum &&
+    lastSavedData.hname === (data.hname || 'N/A') &&
+    lastSavedData.hnum === (data.hnum || 'N/A') &&
+    lastSavedData.route === data.route &&
+    lastSavedData.time === data.time &&
+    lastSavedData.date === data.date
+  );
+}
+
+// Save to database via API
+async function saveToDatabase(data) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        car: data.car,
+        dname: data.dname,
+        dnum: data.dnum,
+        hname: data.hname,
+        hnum: data.hnum,
+        route: data.route,
+        time: data.time,
+        date: data.date
+      })
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('Data saved successfully!', result);
+      // Store last saved data and receipt number
+      lastSavedData = {
+        car: data.car,
+        dname: data.dname,
+        dnum: data.dnum,
+        hname: data.hname || 'N/A',
+        hnum: data.hnum || 'N/A',
+        route: data.route,
+        time: data.time,
+        date: data.date
       };
+      lastReceiptNo = result.receiptNo;
+      loadRecords();
+      return result.receiptNo;
+    } else {
+      throw new Error(result.message || 'ডাটা সেভ করতে সমস্যা হয়েছে!');
+    }
+  } catch (error) {
+    console.error('Error saving data:', error);
+    alert('ডাটা সেভ করতে সমস্যা হয়েছে! ' + error.message);
+    return null;
+  }
+}
 
-      if (!data.car || !data.dname || !data.dnum || !data.route || !data.time || !data.date) {
-        alert("সব প্রয়োজনীয় ফিল্ড পূরণ করুন");
-        return;
-      }
-
-      const h = hashData(data);
-      let record;
-
-      if (h === lastSavedHash) {
-        record = window.__lastRecord;
-      } else {
-        const res = await apiPost(`${API}/save`, data);
-        record = res.record;
-        lastSavedHash = h;
-        window.__lastRecord = record;
-        loadRecords();
-      }
-
-      renderReceipt(record);
-      setTimeout(() => { window.print(); }, 400);
+// Load records from database via API
+async function loadRecords() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/records`);
+    const result = await response.json();
+    
+    const recordsList = document.getElementById('recordsList');
+    
+    if (!result.success || !result.records || result.records.length === 0) {
+      recordsList.innerHTML = '<div class="empty-receipt">কোনো রেকর্ড নেই</div>';
+      return;
     }
 
-    /* ============================
-       RENDER RECEIPT
-    ============================ */
-    function renderReceipt(r) {
-      const formattedDate = new Date(r.date).toLocaleDateString("bn-BD", { year: "numeric", month: "long", day: "numeric" });
-      qs("printArea").innerHTML = `
+    recordsList.innerHTML = result.records.map(record => `
+      <div class="record-item">
+        <div class="record-header">
+          <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+          <span class="record-date">${record.date} ${record.time}</span>
+        </div>
+        <div class="record-details">
+          <strong>গাড়ী:</strong> ${record.car_number} | 
+          <strong>ড্রাইভার:</strong> ${record.driver_name} (${record.driver_number}) | 
+          <strong>রুট:</strong> ${record.route}
+        </div>
+        <div style="margin-top: 8px; font-size: 11px; color: #888;">
+          ID: ${record.id} | Created: ${new Date(record.created_at).toLocaleString('bn-BD')}
+        </div>
+      </div>
+    `).join('');
+  } catch (error) {
+    console.error('Error loading records:', error);
+    const recordsList = document.getElementById('recordsList');
+    recordsList.innerHTML = '<div class="empty-receipt" style="color: #e74c3c;">রেকর্ড লোড করতে সমস্যা হয়েছে! সার্ভার চালু আছে কিনা দেখুন।</div>';
+  }
+}
+
+// Generate and print receipt
+async function generateToken() {
+  const car = document.getElementById('car').value.trim();
+  const dname = document.getElementById('dname').value.trim();
+  const dnum = document.getElementById('dnum').value.trim();
+  const hname = document.getElementById('hname').value.trim();
+  const hnum = document.getElementById('hnum').value.trim();
+  const route = document.getElementById('route').value.trim();
+  const time = document.getElementById('time').value;
+  const date = document.getElementById('date').value;
+
+  // Validation
+  if (!car || !dname || !dnum || !route || !time || !date) {
+    alert('অনুগ্রহ করে সব প্রয়োজনীয় ফিল্ড পূরণ করুন!');
+    return;
+  }
+
+  const formattedDate = new Date(date).toLocaleDateString('bn-BD', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const data = {
+    car: car,
+    dname: dname,
+    dnum: dnum,
+    hname: hname || 'N/A',
+    hnum: hnum || 'N/A',
+    route: route,
+    time: time,
+    date: date
+  };
+
+  let receiptNo;
+  let shouldSave = true;
+
+  // Check if this is the same data as last saved
+  if (isDataSame(data)) {
+    // Same data - use last receipt number, don't save again
+    receiptNo = lastReceiptNo;
+    shouldSave = false;
+    console.log('Same data detected - skipping save, using last receipt number:', receiptNo);
+  } else {
+    // New or different data - save to database
+    receiptNo = await saveToDatabase(data);
+    
+    if (!receiptNo) {
+      return; // Error occurred, don't proceed with printing
+    }
+  }
+
+  // Generate receipt HTML
+  const receiptHTML = `
     <div class="receipt">
       <div class="receipt-header">
         <h3>গাড়ির টোকেন সিস্টেম</h3>
         <p>Vehicle Token System</p>
       </div>
-      <div class="receipt-number">রিসিপ্ট নম্বর: ${r.receipt_no}</div>
-      <div class="receipt-info">
-        <div class="receipt-info-row"><span class="receipt-info-label">ID:</span><span>${r.car_number}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">ড্রাইভার:</span><span>${r.driver_name}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">মোবাইল:</span><span>${r.driver_number}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">হেল্পার:</span><span>${r.helper_name}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">রুট:</span><span>${r.route}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">সময়:</span><span>${r.time}</span></div>
-        <div class="receipt-info-row"><span class="receipt-info-label">তারিখ:</span><span>${formattedDate}</span></div>
+
+      <div class="receipt-number">
+        রিসিপ্ট নম্বর: ${receiptNo}
       </div>
+
+      <div class="receipt-info">
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">গাড়ীর নাম্বার:</span>
+          <span class="receipt-info-value">${data.car}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">ড্রাইভারের নাম:</span>
+          <span class="receipt-info-value">${data.dname}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">ড্রাইভারের নাম্বার:</span>
+          <span class="receipt-info-value">${data.dnum}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">হেল্পার নাম:</span>
+          <span class="receipt-info-value">${data.hname}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">হেল্পার নাম্বার:</span>
+          <span class="receipt-info-value">${data.hnum}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">রুট:</span>
+          <span class="receipt-info-value">${data.route}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">সময়:</span>
+          <span class="receipt-info-value">${data.time}</span>
+        </div>
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">তারিখ:</span>
+          <span class="receipt-info-value">${formattedDate}</span>
+        </div>
+      </div>
+
+      <table class="receipt-table">
+        <tr>
+          <td>ডোপ প্রাস</td>
+          <td>ডোপ লিফট/প্রেস</td>
+          <td>টোটাল ওজন</td>
+          <td>পার্টনার</td>
+          <td>১৭ ফিট</td>
+        </tr>
+        <tr>
+          <td>টায়ার চেক</td>
+          <td>ফুল পরিষ্কার</td>
+          <td>ফিটনেস</td>
+          <td>ব্রেক</td>
+          <td>এসি</td>
+        </tr>
+      </table>
+
+      <table class="receipt-table">
+        <tr>
+          <td>ফগ লাইট / জগ / লক / রেঞ্চ</td>
+        </tr>
+      </table>
+
+      <table class="receipt-table">
+        <tr>
+          <td>পাইপ / স্পেয়ার চাকা</td>
+        </tr>
+      </table>
+
+      <table class="receipt-table">
+        <tr>
+          <td>সাইড বুক / নাম্বার প্লেট / লিভার</td>
+        </tr>
+      </table>
+
+      <div class="receipt-info">
+        <div class="receipt-info-row">
+          <span class="receipt-info-label">হেড লাইট:</span>
+          <span class="receipt-info-value">ভালো / খারাপ</span>
+        </div>
+        <div class="receipt-info-row" style="display: flex; justify-content: space-between; margin: 10px 0;">
+          <span style="width: 48%; text-align: left;">তেল ডিপার চেক: __________</span>
+          <span style="width: 48%; text-align: right;">ইন্ডিকেটর চেক: __________</span>
+        </div>
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #000;">
+          <div style="text-align: center; margin-bottom: 10px;">সই</div>
+          <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 10px;"></div>
+          <div style="text-align: center; font-size: 11px;">নাম: ___________________</div>
+        </div>
+      </div>
+
       <div class="receipt-footer">
         <p>ধন্যবাদ</p>
         <p>Thank You!</p>
       </div>
     </div>
   `;
+
+  document.getElementById('printArea').innerHTML = receiptHTML;
+
+  // Ensure content is visible before printing
+  const printArea = document.getElementById('printArea');
+  printArea.style.display = 'block';
+  printArea.style.visibility = 'visible';
+  printArea.style.opacity = '1';
+
+  // Print after a small delay to ensure content is rendered
+  setTimeout(() => {
+    // Scroll to top to ensure print starts from beginning
+    window.scrollTo(0, 0);
+    // Trigger print
+    window.print();
+  }, 500);
+}
+
+// Clear form
+function clearForm() {
+  document.getElementById('car').value = '';
+  document.getElementById('dname').value = '';
+  document.getElementById('dnum').value = '';
+  document.getElementById('hname').value = '';
+  document.getElementById('hnum').value = '';
+  document.getElementById('route').value = '';
+  document.getElementById('time').value = '';
+  document.getElementById('date').value = '';
+  document.getElementById('printArea').innerHTML = '<div class="empty-receipt">রিসিপ্ট দেখতে ফর্মটি পূরণ করুন</div>';
+  // Reset last saved data when form is cleared
+  lastSavedData = null;
+  lastReceiptNo = null;
+}
+
+// Auto fill time
+function autoFillTime() {
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  document.getElementById('time').value = `${hours}:${minutes}`;
+}
+
+// Search records
+async function searchRecords() {
+  const receiptNo = document.getElementById('searchReceiptNo').value.trim();
+  const driverId = document.getElementById('searchDriverId').value.trim();
+
+  if (!receiptNo && !driverId) {
+    alert('অনুগ্রহ করে রিসিপ্ট নম্বর অথবা ড্রাইভার ID লিখুন!');
+    return;
+  }
+
+  try {
+    let url = `${API_BASE_URL}/search?`;
+    if (receiptNo) {
+      url += `receiptNo=${encodeURIComponent(receiptNo)}`;
+    } else if (driverId) {
+      url += `driverId=${encodeURIComponent(driverId)}`;
     }
 
-    /* ============================
-       SEARCH
-    ============================ */
-    async function searchRecords() {
-      const r = qs("searchReceiptNo").value.trim();
-      const d = qs("searchDriverId").value.trim();
-      if (!r && !d) { alert("সার্চ ইনপুট দিন"); return; }
+    const response = await fetch(url);
+    const result = await response.json();
 
-      const res = await apiGet(`${API}/search?q=${encodeURIComponent(r || d)}`);
-      const box = qs("searchResults");
+    const searchResults = document.getElementById('searchResults');
 
-      if (!res.length) {
-        box.innerHTML = `<div class="empty-receipt">কোনো রেকর্ড নেই</div>`;
-        return;
-      }
+    if (!result.success || !result.records || result.records.length === 0) {
+      searchResults.innerHTML = '<div class="empty-receipt">কোনো রেকর্ড পাওয়া যায়নি</div>';
+      return;
+    }
 
-      box.innerHTML = res.map(x => `
-    <div class="record-item">
-      <b>${x.receipt_no}</b><br>
-      ID: ${x.car_number}<br>
-      ড্রাইভার: ${x.driver_name}
-      <div style="margin-top:6px">
-        <button onclick="printReceiptById('${x.id}')" style="width:auto;padding:6px 10px">🖨️ Print</button>
+    searchResults.innerHTML = result.records.map(record => `
+      <div class="record-item">
+        <div class="record-header">
+          <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+          <span class="record-date">${record.date} ${record.time}</span>
+        </div>
+        <div class="record-details">
+          <strong>ID:</strong> ${record.car_number} | 
+          <strong>ড্রাইভার:</strong> ${record.driver_name} (${record.driver_number}) | 
+          <strong>রুট:</strong> ${record.route}
+        </div>
+        <div style="margin-top: 10px;">
+          <button onclick="printReceiptById(${record.id})" style="width: auto; padding: 8px 15px; font-size: 14px; margin-right: 10px;">🖨️ প্রিন্ট করুন</button>
+        </div>
       </div>
-    </div>
-  `).join("");
+    `).join('');
+  } catch (error) {
+    console.error('Error searching records:', error);
+    document.getElementById('searchResults').innerHTML = '<div class="empty-receipt" style="color: #e74c3c;">সার্চ করতে সমস্যা হয়েছে!</div>';
+  }
+}
+
+// Load date sorted records
+async function loadDateSortedRecords() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/records-by-date`);
+    const result = await response.json();
+
+    const dateSortedRecords = document.getElementById('dateSortedRecords');
+
+    if (!result.success || !result.records || result.records.length === 0) {
+      dateSortedRecords.innerHTML = '<div class="empty-receipt">কোনো রেকর্ড নেই</div>';
+      return;
     }
 
-    /* ============================
-       PRINT BY ID
-    ============================ */
-    async function printReceiptById(id) {
-      const r = await apiGet(`${API}/get?id=${id}`);
-      renderReceipt(r);
-      setTimeout(() => { window.print(); }, 400);
-    }
-
-    /* ============================
-       CLEAR ALL (SERVER)
-    ============================ */
-    async function clearAllData() {
-      if (!confirm("সব ডাটা মুছবেন?")) return;
-      await apiPost(`${API}/clear`, {});
-      loadRecords();
-      alert("সব ডাটা মুছে গেছে");
-    }
-
-    /* ============================
-       INIT
-    ============================ */
-    function autoFillTime() {
-      const n = new Date();
-      qs("time").value = `${String(n.getHours()).padStart(2, "0")}:${String(n.getMinutes()).padStart(2, "0")}`;
-    }
-    document.addEventListener("DOMContentLoaded", () => {
-      qs("date").value = new Date().toISOString().split("T")[0];
-      autoFillTime();
-      loadRecords();
+    // Group by date
+    const groupedByDate = {};
+    result.records.forEach(record => {
+      const date = record.date;
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = [];
+      }
+      groupedByDate[date].push(record);
     });
-  </script>
 
+    let html = '';
+    Object.keys(groupedByDate).sort().reverse().forEach(date => {
+      const formattedDate = new Date(date).toLocaleDateString('bn-BD', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      html += `<div style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #667eea;">`;
+      html += `<h3 style="margin-bottom: 15px; color: #667eea;">📅 ${formattedDate}</h3>`;
+      html += groupedByDate[date].map(record => `
+        <div class="record-item" style="margin: 10px 0;">
+          <div class="record-header">
+            <span class="record-number">রিসিপ্ট নম্বর: ${record.receipt_no}</span>
+            <span class="record-date">${record.time}</span>
+          </div>
+          <div class="record-details">
+            <strong>ID:</strong> ${record.car_number} | 
+            <strong>ড্রাইভার:</strong> ${record.driver_name} | 
+            <strong>রুট:</strong> ${record.route}
+          </div>
+          <div style="margin-top: 10px;">
+            <button onclick="printReceiptById(${record.id})" style="width: auto; padding: 8px 15px; font-size: 14px;">🖨️ প্রিন্ট</button>
+          </div>
+        </div>
+      `).join('');
+      html += `</div>`;
+    });
+
+    dateSortedRecords.innerHTML = html;
+  } catch (error) {
+    console.error('Error loading date sorted records:', error);
+    document.getElementById('dateSortedRecords').innerHTML = '<div class="empty-receipt" style="color: #e74c3c;">রেকর্ড লোড করতে সমস্যা হয়েছে!</div>';
+  }
+}
+
+// Print receipt by ID
+async function printReceiptById(id) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/records`);
+    const result = await response.json();
+
+    if (!result.success || !result.records) {
+      alert('রেকর্ড লোড করতে সমস্যা হয়েছে!');
+      return;
+    }
+
+    const record = result.records.find(r => r.id === id);
+    if (!record) {
+      alert('রেকর্ড পাওয়া যায়নি!');
+      return;
+    }
+
+    // Generate receipt HTML for this record
+    const formattedDate = new Date(record.date).toLocaleDateString('bn-BD', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const receiptHTML = `
+      <div class="receipt">
+        <div class="receipt-header">
+          <h3>গাড়ির টোকেন সিস্টেম</h3>
+          <p>Vehicle Token System</p>
+        </div>
+
+        <div class="receipt-number">
+          রিসিপ্ট নম্বর: ${record.receipt_no}
+        </div>
+
+        <div class="receipt-info">
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">ID (গাড়ীর নাম্বার):</span>
+            <span class="receipt-info-value">${record.car_number}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">ড্রাইভারের নাম:</span>
+            <span class="receipt-info-value">${record.driver_name}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">ড্রাইভারের নাম্বার:</span>
+            <span class="receipt-info-value">${record.driver_number}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">হেল্পার নাম:</span>
+            <span class="receipt-info-value">${record.helper_name || 'N/A'}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">হেল্পার নাম্বার:</span>
+            <span class="receipt-info-value">${record.helper_number || 'N/A'}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">রুট:</span>
+            <span class="receipt-info-value">${record.route}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">সময়:</span>
+            <span class="receipt-info-value">${record.time}</span>
+          </div>
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">তারিখ:</span>
+            <span class="receipt-info-value">${formattedDate}</span>
+          </div>
+        </div>
+
+        <table class="receipt-table">
+          <tr>
+            <td>ডোপ প্রাস</td>
+            <td>ডোপ লিফট/প্রেস</td>
+            <td>টোটাল ওজন</td>
+            <td>পার্টনার</td>
+            <td>১৭ ফিট</td>
+          </tr>
+          <tr>
+            <td>টায়ার চেক</td>
+            <td>ফুল পরিষ্কার</td>
+            <td>ফিটনেস</td>
+            <td>ব্রেক</td>
+            <td>এসি</td>
+          </tr>
+        </table>
+
+        <table class="receipt-table">
+          <tr>
+            <td>ফগ লাইট / জগ / লক / রেঞ্চ</td>
+          </tr>
+        </table>
+
+        <table class="receipt-table">
+          <tr>
+            <td>পাইপ / স্পেয়ার চাকা</td>
+          </tr>
+        </table>
+
+        <table class="receipt-table">
+          <tr>
+            <td>সাইড বুক / নাম্বার প্লেট / লিভার</td>
+          </tr>
+        </table>
+
+        <div class="receipt-info">
+          <div class="receipt-info-row">
+            <span class="receipt-info-label">হেড লাইট:</span>
+            <span class="receipt-info-value">ভালো / খারাপ</span>
+          </div>
+          <div class="receipt-info-row" style="display: flex; justify-content: space-between; margin: 10px 0;">
+            <span style="width: 48%; text-align: left;">তেল ডিপার চেক: __________</span>
+            <span style="width: 48%; text-align: right;">ইন্ডিকেটর চেক: __________</span>
+          </div>
+          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #000;">
+            <div style="text-align: center; margin-bottom: 10px;">সই</div>
+            <div style="border-bottom: 1px solid #000; height: 30px; margin-bottom: 10px;"></div>
+            <div style="text-align: center; font-size: 11px;">নাম: ___________________</div>
+          </div>
+        </div>
+
+        <div class="receipt-footer">
+          <p>ধন্যবাদ</p>
+          <p>Thank You!</p>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('printArea').innerHTML = receiptHTML;
+
+    // Print
+    const printArea = document.getElementById('printArea');
+    printArea.style.display = 'block';
+    printArea.style.visibility = 'visible';
+    printArea.style.opacity = '1';
+
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      window.print();
+    }, 500);
+  } catch (error) {
+    console.error('Error printing receipt:', error);
+    alert('প্রিন্ট করতে সমস্যা হয়েছে!');
+  }
+}
+
+// Export to Excel
+async function exportToExcel() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/export`);
+    const result = await response.json();
+
+    if (!result.success || !result.records) {
+      alert('রেকর্ড লোড করতে সমস্যা হয়েছে!');
+      return;
+    }
+
+    // Create CSV content
+    const headers = ['রিসিপ্ট নম্বর', 'ID', 'ড্রাইভারের নাম', 'ড্রাইভারের নাম্বার', 'হেল্পার নাম', 'হেল্পার নাম্বার', 'রুট', 'সময়', 'তারিখ', 'তারিখ/সময়'];
+    const csvRows = [headers.join(',')];
+
+    result.records.forEach(record => {
+      const row = [
+        record.receipt_no || '',
+        record.car_number || '',
+        record.driver_name || '',
+        record.driver_number || '',
+        record.helper_name || '',
+        record.helper_number || '',
+        record.route || '',
+        record.time || '',
+        record.date || '',
+        record.created_at || ''
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `vehicle_tokens_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    alert('Excel ফাইল ডাউনলোড হয়েছে!');
+  } catch (error) {
+    console.error('Error exporting to Excel:', error);
+    alert('Export করতে সমস্যা হয়েছে!');
+  }
+}
+
+// Set default date to today and auto fill time
+document.addEventListener('DOMContentLoaded', function() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+  autoFillTime();
+  loadRecords();
+  
+  // Auto fill time when date changes
+  document.getElementById('date').addEventListener('change', function() {
+    autoFillTime();
+  });
+});
+</script>
 
 </body>
-
 </html>

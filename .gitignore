@@ -5,6 +5,3 @@ vehicletokens.db
 .env
 npm-debug.log
 yarn-error.log
-
-# Local Netlify folder
-.netlify
